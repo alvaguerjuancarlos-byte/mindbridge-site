@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindBridge — Casos de Éxito</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@500&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #0D1B2A;
+  --card:       #112236;
+  --card-edge:  rgba(5,200,224,0.12);
+  --card-open:  rgba(5,200,224,0.18);
+  --accent:     #05C8E0;
+  --accent-dim: rgba(5,200,224,0.10);
+  --accent-mid: rgba(5,200,224,0.20);
+  --white:      #FFFFFF;
+  --muted:      rgba(255,255,255,0.38);
+  --body:       rgba(255,255,255,0.62);
+  --font:       'DM Sans', sans-serif;
+  --mono:       'DM Mono', monospace;
+  --radius:     14px;
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--font);
+  height: 720px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 100px 24px;
+}
+
+/* ── Section header ───────────────────── */
+.section-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.section-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 36px;
+  max-width: 540px;
+}
+
+/* ── Grid ─────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  align-items: start;
+  align-content: center;
+  width: 100%;
+  flex: 1;
+}
+
+/* ── Card ─────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 0.5px solid var(--card-edge);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+}
+.card:hover {
+  border-color: rgba(5,200,224,0.30);
+}
+.card.is-open {
+  border-color: var(--card-open);
+  box-shadow: 0 0 0 1px rgba(5,200,224,0.10), 0 8px 32px rgba(0,0,0,0.35);
+}
+
+/* ── Card header (always visible) ──────── */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  user-select: none;
+}
+.card-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  background: var(--accent-dim);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.card.is-open .card-icon {
+  background: var(--accent-mid);
+}
+.card-icon svg {
+  width: 17px; height: 17px;
+  stroke: var(--accent); fill: none;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.card-meta { flex: 1; min-width: 0; }
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-seg {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.card-chevron {
+  width: 20px; height: 20px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform var(--transition);
+  opacity: 0.5;
+}
+.card.is-open .card-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+.card-chevron svg {
+  width: 14px; height: 14px;
+  stroke: var(--accent); fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ── Accordion body ────────────────────── */
+.card-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition);
+}
+.card.is-open .card-body {
+  grid-template-rows: 1fr;
+}
+.card-body-inner {
+  overflow: hidden;
+}
+.card-body-content {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+  padding-top: 14px;
+}
+
+/* ── KPIs ──────────────────────────────── */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+.kpi {
+  background: var(--accent-dim);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+}
+.kpi-val {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+.kpi-lbl {
+  font-size: 8px;
+  color: var(--muted);
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+/* ── Divider ───────────────────────────── */
+.divider { height: 0.5px; background: rgba(255,255,255,0.07); }
+
+/* ── Problema ──────────────────────────── */
+.problema { font-size: 11px; color: var(--body); line-height: 1.6; }
+.problema strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+/* ── Pills ─────────────────────────────── */
+.pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.pill {
+  font-size: 9.5px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  border: 0.5px solid rgba(5,200,224,0.28);
+  color: rgba(5,200,224,0.82);
+  background: rgba(5,200,224,0.06);
+  white-space: nowrap;
+}
+
+/* ── ROI banner ────────────────────────── */
+.roi {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(5,200,224,0.08);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 10px;
+  line-height: 1.5;
+}
+
+/* ── CTA typewriter ────────────────────── */
+.leyenda {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-top: 14px;
+  opacity: 0;
+  animation: fadeInLey 0.5s ease forwards 0.8s;
+}
+.leyenda-line {
+  width: 500px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(5,200,224,0.4), transparent);
+}
+.leyenda-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 1.5px;
+  text-align: center;
+}
+.tw-cyan { color: #05C8E0; }
+.cur {
+  display: inline-block;
+  width: 3px; height: 28px;
+  background: #05C8E0;
+  margin-left: 3px;
+  vertical-align: middle;
+  animation: blink 0.7s step-end infinite;
+}
+.cur.done { animation: none; opacity: 0; }
+@keyframes fadeInLey { to { opacity: 1; } }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* ── Mobile ────────────────────────────── */
+@media (max-width: 640px) {
+  body { padding: 32px 16px 48px; }
+  .grid { grid-template-columns: 1fr; gap: 8px; }
+  .section-title { font-size: 20px; }
+  .kpi-val { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<p class="section-eyebrow">Casos de éxito</p>
+<h2 class="section-title">IA que genera resultados reales — en tu industria</h2>
+<p class="section-sub">Implementaciones documentadas con métricas reales. Sin promesas — solo números.</p>
+
+<div class="grid">
+
+  <!-- 1. Atención al cliente -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Atención al cliente</div>
+        <div class="card-seg">Servicios · Retail · Fintech</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">&lt;4 min</div><div class="kpi-lbl">Tiempo respuesta (vs 6–36 h)</div></div>
+            <div class="kpi"><div class="kpi-val">65%</div><div class="kpi-lbl">Consultas sin agente humano</div></div>
+            <div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Costo operativo soporte</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> 60–70% de tickets eran preguntas repetitivas. Triaje manual, clientes esperando hasta 36 h, CSAT en caída libre.</p>
+          <div class="pills">
+            <span class="pill">Chatbot generativo 24/7</span>
+            <span class="pill">Clasificación automática</span>
+            <span class="pill">AI Copilot para agentes</span>
+          </div>
+          <div class="roi">ROI en menos de 6 meses — costo IA: $0.25–$0.50 vs $3–$6 por interacción humana</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Finanzas -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Finanzas y contabilidad</div>
+        <div class="card-seg">Empresa mediana · 50–250 empleados</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">-85%</div><div class="kpi-lbl">Tiempo conciliaciones</div></div>
+            <div class="kpi"><div class="kpi-val">-95%</div><div class="kpi-lbl">Errores contables</div></div>
+            <div class="kpi"><div class="kpi-val">450%</div><div class="kpi-lbl">ROI primer año</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> Cierre mensual de 12 días con 2.5 FTEs. Flujo de caja impredecible. CFO enterrado en hojas de cálculo, sin tiempo para análisis estratégico.</p>
+          <div class="pills">
+            <span class="pill">Conciliación automática</span>
+            <span class="pill">Detección de anomalías</span>
+            <span class="pill">FP&amp;A predictivo</span>
+          </div>
+          <div class="roi">De 12 días a 3 días de cierre · 93% precisión en pronóstico de caja</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Ventas PyME -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Ventas PyME</div>
+        <div class="card-seg">Servicios / Comercial · 10–50 empleados</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">+35%</div><div class="kpi-lbl">Leads generados</div></div>
+            <div class="kpi"><div class="kpi-val">-40%</div><div class="kpi-lbl">Carga operativa comercial</div></div>
+            <div class="kpi"><div class="kpi-val">&lt;1 min</div><div class="kpi-lbl">Tiempo de respuesta</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> 35–40% de consultas fuera de horario se perdían. Vendedores respondiendo FAQ en lugar de cerrar. Sin scoring, todos los leads recibían el mismo seguimiento.</p>
+          <div class="pills">
+            <span class="pill">Chatbot WhatsApp + web</span>
+            <span class="pill">Scoring automático</span>
+            <span class="pill">CRM con nurturing IA</span>
+          </div>
+          <div class="roi">ROI positivo en &lt;90 días · desde $4,500 MXN/mes sistema completo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Recursos Humanos -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Recursos humanos</div>
+        <div class="card-seg">100–5,000 empleados · CHRO / TA</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">-75%</div><div class="kpi-lbl">Tiempo en screening</div></div>
+            <div class="kpi"><div class="kpi-val">95%</div><div class="kpi-lbl">Precisión predicción rotación</div></div>
+            <div class="kpi"><div class="kpi-val">-52%</div><div class="kpi-lbl">Rotación no deseada</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> 13 h/semana por reclutador en screening manual. Decisiones subjetivas con sesgos. Rotación impredecible — la empresa se entera cuando ya es tarde.</p>
+          <div class="pills">
+            <span class="pill">Filtrado inteligente NLP</span>
+            <span class="pill">Evaluación continua IA</span>
+            <span class="pill">Predicción de rotación</span>
+          </div>
+          <div class="roi">Evitar 3 salidas de $200K MXN/año = $900K MXN ahorrados — cubre años de inversión</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Pricing inteligente -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Pricing inteligente</div>
+        <div class="card-seg">CPG · Retail · Manufactura · Distribución</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">+3–8%</div><div class="kpi-lbl">Incremento margen bruto</div></div>
+            <div class="kpi"><div class="kpi-val">96%</div><div class="kpi-lbl">Exactitud del modelo</div></div>
+            <div class="kpi"><div class="kpi-val">+15%</div><div class="kpi-lbl">Crecimiento ventas netas</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> Millones de combinaciones SKU × tienda imposibles de gestionar en SAP. Precio único sacrifica margen o volumen. Sensibilidades distintas por canal, región y cliente.</p>
+          <div class="pills">
+            <span class="pill">Elasticidad SKU × PDV</span>
+            <span class="pill">Agente IA comercial</span>
+            <span class="pill">Revenue management</span>
+          </div>
+          <div class="roi">ROI desde primer trimestre · opera sobre SAP / POS / ERP existente sin reemplazarlo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Detección de fraude -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Detección de fraude</div>
+        <div class="card-seg">Banca · Fintech · SOFOM</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">+50%</div><div class="kpi-lbl">Fraudes detectados</div></div>
+            <div class="kpi"><div class="kpi-val">-60%</div><div class="kpi-lbl">Falsos positivos</div></div>
+            <div class="kpi"><div class="kpi-val">&lt;50 ms</div><div class="kpi-lbl">Tiempo de alerta</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> Reglas estáticas con hasta 95% de falsos positivos. Fraude detectado horas después del evento. Puntos de lealtad y cancelaciones: vectores ciegos sin modelo predictivo.</p>
+          <div class="pills">
+            <span class="pill">Scoring transaccional ML</span>
+            <span class="pill">Protección de lealtad</span>
+            <span class="pill">Alertas en tiempo real</span>
+          </div>
+          <div class="roi">ROI 3x en primer año · detección preventiva 48 h antes del evento de fraude coordinado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Churn y retención -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Churn y retención</div>
+        <div class="card-seg">Banca · Retail · Tarjetas</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Tasa de churn</div></div>
+            <div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Costo por cliente retenido</div></div>
+            <div class="kpi"><div class="kpi-val">&lt;24 h</div><div class="kpi-lbl">Reacción ante señal</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> Churn anual del 15–25% con reacción tardía. Campañas genéricas con 8–12% de conversión. Sin priorización por LTV, los recursos de retención se diluyen sin impacto medible.</p>
+          <div class="pills">
+            <span class="pill">Scoring predictivo AUC 0.93</span>
+            <span class="pill">Estrategia con IA generativa</span>
+            <span class="pill">Loop cerrado automatizado</span>
+          </div>
+          <div class="roi">Adquirir un cliente cuesta 5–7× más que retenerlo · conversión de oferta +2.4× vs campaña genérica</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Hipersegmentación -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">Hipersegmentación</div>
+        <div class="card-seg">Banca · Retail · Manufactura</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">+40%</div><div class="kpi-lbl">Conversión campañas (banca)</div></div>
+            <div class="kpi"><div class="kpi-val">+25%</div><div class="kpi-lbl">Ticket promedio (retail)</div></div>
+            <div class="kpi"><div class="kpi-val">-20%</div><div class="kpi-lbl">Costo servicio (manufactura)</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> Segmentación plana de 3–5 grupos agrupa clientes con comportamientos opuestos. Mismo trato para el cliente premium y el ocasional. Oportunidades de cross-sell invisibles en los datos.</p>
+          <div class="pills">
+            <span class="pill">Clustering conductual ML</span>
+            <span class="pill">20–80 microsegmentos dinámicos</span>
+            <span class="pill">Activación por canal y producto</span>
+          </div>
+          <div class="roi">+18 pts NPS promedio · primer microsegmento productivo en 6–8 semanas · ROI visible antes del rollout</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. RFM / Promociones -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">RFM y optimización de promociones</div>
+        <div class="card-seg">Retail · Banca · Programas de lealtad</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">+18%</div><div class="kpi-lbl">Promotion lift</div></div>
+            <div class="kpi"><div class="kpi-val">-25%</div><div class="kpi-lbl">Costo de promoción</div></div>
+            <div class="kpi"><div class="kpi-val">+12%</div><div class="kpi-lbl">Margen neto por campaña</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> Promociones genéricas con descuentos malgastados en clientes que comprarían de todas formas. Sin segmentación RFM el presupuesto promocional no discrimina entre el cliente activo y el dormido.</p>
+          <div class="pills">
+            <span class="pill">Segmentación RFM con ML</span>
+            <span class="pill">Copiloto IA promocional</span>
+            <span class="pill">Optimización de descuento</span>
+          </div>
+          <div class="roi">+14% frecuencia de compra · +11% ticket promedio · ROI positivo desde la primera campaña optimizada</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. CPFR / Demand Planning -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">CPFR y Demand Planning</div>
+        <div class="card-seg">Manufactura · Retail · Distribución / CPG</div>
+      </div>
+      <div class="card-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body">
+      <div class="card-body-inner">
+        <div class="card-body-content">
+          <div class="kpis">
+            <div class="kpi"><div class="kpi-val">-15/20%</div><div class="kpi-lbl">Reducción inventarios</div></div>
+            <div class="kpi"><div class="kpi-val">+15 pts</div><div class="kpi-lbl">Nivel de servicio</div></div>
+            <div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Mejora MAPE forecast</div></div>
+          </div>
+          <div class="divider"></div>
+          <p class="problema"><strong>Problema:</strong> MAPE del 35–50% con métodos tradicionales. Inventarios de 60–90 días como colchón de incertidumbre. Fill rate en 85–90% cuando el objetivo es 98%+. S&OP de negociación política, no de datos.</p>
+          <div class="pills">
+            <span class="pill">Forecast ML multivariable</span>
+            <span class="pill">Stock de seguridad óptimo</span>
+            <span class="pill">CPFR colaborativo con IA</span>
+            <span class="pill">Copiloto S&OP</span>
+          </div>
+          <div class="roi">-25% días de inventario · -30% fletes urgentes · -40% merma · ROI en 6–9 meses</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="leyenda">
+  <div class="leyenda-line"></div>
+  <div class="leyenda-text">
+    <span id="tw-before"></span><span id="tw-cyan" class="tw-cyan"></span><span class="cur" id="cur"></span>
+  </div>
+  <div class="leyenda-line"></div>
+</div>
+
+<script>
+const part1 = "Nos encantaría darte más detalle de ";
+const part2 = "los casos de tu interés.";
+const elBefore = document.getElementById('tw-before');
+const elCyan   = document.getElementById('tw-cyan');
+const cur      = document.getElementById('cur');
+let i = 0;
+const fullText = part1 + part2;
+setTimeout(function type() {
+  if (i < fullText.length) {
+    if (i < part1.length) elBefore.textContent += fullText[i];
+    else elCyan.textContent += fullText[i];
+    i++;
+    setTimeout(type, 50 + Math.random() * 30);
+  } else {
+    setTimeout(() => cur.classList.add('done'), 800);
+  }
+}, 1000);
+
+  const cards = document.querySelectorAll('.card');
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const isOpen = card.classList.contains('is-open');
+      cards.forEach(c => c.classList.remove('is-open'));
+      if (!isOpen) card.classList.add('is-open');
+      // Devolver foco al documento padre para que las flechas vuelvan a funcionar
+      try { window.parent.focus(); } catch(e) {}
+    });
+  });
+</script>
+
+</body>
+</html>

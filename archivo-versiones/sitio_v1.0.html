@@ -1,0 +1,606 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindBridge · smart tech · human sense</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan:  #05C8E0;
+  --navy:  #0D1B2A;
+  --navy2: #0f2033;
+  --card:  #112236;
+  --cyan2: rgba(5,200,224,0.12);
+  --white: #FFFFFF;
+  --muted: rgba(255,255,255,0.55);
+  --body:  rgba(255,255,255,0.72);
+  --gray:  #8899AA;
+  --max:   1200px;
+  --ease:  cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--white);font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--navy);}::-webkit-scrollbar-thumb{background:rgba(5,200,224,0.3);border-radius:3px;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:64px;background:rgba(13,27,42,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(5,200,224,0.15);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:36px;height:36px;flex-shrink:0;}
+.nav-logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.15rem;color:var(--white);letter-spacing:.06em;}
+.nav-logo-tag{font-size:.6rem;color:var(--cyan);font-weight:400;display:block;letter-spacing:.1em;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.83rem;font-weight:500;letter-spacing:.03em;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);}
+.nav-cta{background:var(--cyan);color:var(--navy)!important;padding:.45rem 1.1rem;border-radius:5px;font-weight:700!important;}
+.nav-cta:hover{opacity:.85;}
+
+/* ── COMMON ── */
+section,div.sec{padding:6rem 5%;max-width:var(--max);margin:0 auto;}
+div.sec-full{max-width:100%;padding:6rem 5%;}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase;margin-bottom:.75rem;display:block;}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:.9rem;color:var(--white);}
+.sec-title span{color:var(--cyan);}
+.sec-sub{color:var(--gray);font-size:1rem;line-height:1.7;max-width:600px;margin-bottom:2.5rem;}
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(5,200,224,0.2),transparent);margin:0;}
+.cyan{color:var(--cyan);}
+
+/* ── FADE UP ── */
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:8rem 5% 4rem;}
+.bg-circuit{position:absolute;inset:0;background-image:linear-gradient(rgba(5,200,224,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(5,200,224,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+#hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,var(--navy));pointer-events:none;}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:4rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%;position:relative;z-index:2;}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;background:rgba(5,200,224,.12);border:1px solid rgba(5,200,224,.3);color:var(--cyan);font-size:.72rem;letter-spacing:.14em;padding:.4rem 1rem;border-radius:3px;margin-bottom:1.4rem;text-transform:uppercase;}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(2.8rem,7vw,7rem);line-height:1.05;margin-bottom:1.4rem;color:var(--white);}
+.hero h1 .line2{color:var(--cyan);display:block;text-shadow:0 0 40px rgba(5,200,224,.35);}
+.hero-sub{font-size:1.05rem;color:rgba(255,255,255,.65);line-height:1.75;margin-bottom:2.2rem;max-width:480px;}
+.hero-buttons{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-primary{background:var(--cyan);color:var(--navy);padding:.9rem 2rem;border-radius:5px;font-weight:700;font-size:.9rem;text-decoration:none;letter-spacing:.04em;transition:opacity .2s,transform .2s,box-shadow .2s;display:inline-block;box-shadow:0 0 20px rgba(5,200,224,.35);}
+.btn-primary:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 0 32px rgba(5,200,224,.55);}
+.btn-primary.glow{animation:glowPulse 3s ease-in-out infinite;}
+.btn-outline{border:1px solid rgba(5,200,224,.4);color:var(--cyan);padding:.9rem 2rem;border-radius:5px;font-weight:500;font-size:.9rem;text-decoration:none;letter-spacing:.04em;transition:background .2s;display:inline-block;}
+.btn-outline:hover{background:rgba(5,200,224,.08);}
+.hero-visual{position:relative;display:flex;align-items:center;justify-content:center;}
+.hero-logo-center{position:relative;width:320px;height:320px;display:flex;align-items:center;justify-content:center;margin:0 auto;}
+.glow-ring{position:absolute;top:50%;left:50%;width:300px;height:300px;border:1.5px solid rgba(5,200,224,.25);border-radius:50%;transform:translate(-50%,-50%);animation:ringExpand 4s ease-in-out infinite;}
+.glow-ring::after{content:'';position:absolute;top:50%;left:50%;width:240px;height:240px;border:1px solid rgba(5,200,224,.15);border-radius:50%;transform:translate(-50%,-50%);animation:ringExpand 4s ease-in-out infinite reverse;}
+.orbit-wrapper{position:absolute;top:50%;left:50%;width:300px;height:300px;margin-left:-150px;margin-top:-150px;animation:orbitRotate 8s linear infinite;border-radius:50%;}
+.orbit-dot{position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:var(--cyan);border-radius:50%;box-shadow:0 0 12px var(--cyan),0 0 24px rgba(5,200,224,.5);}
+.orbit-wrapper-2{position:absolute;top:50%;left:50%;width:220px;height:220px;margin-left:-110px;margin-top:-110px;animation:orbitRotate 5s linear infinite reverse;border-radius:50%;pointer-events:none;}
+.metric-badge{position:absolute;background:rgba(13,27,42,.88);border:1px solid rgba(5,200,224,.3);color:var(--cyan);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;padding:.4rem .85rem;border-radius:100px;white-space:nowrap;backdrop-filter:blur(8px);letter-spacing:.04em;}
+.badge-1{top:10px;left:50%;transform:translateX(-50%);animation:floatBadge 3s ease-in-out infinite;}
+.badge-2{right:0;top:50%;transform:translateY(-50%);animation:floatBadge 3.5s ease-in-out infinite .5s;}
+.badge-3{bottom:10px;left:50%;transform:translateX(-50%);animation:floatBadge 4s ease-in-out infinite 1s;}
+.badge-4{left:0;top:50%;transform:translateY(-50%);animation:floatBadge 3.2s ease-in-out infinite 1.5s;}
+
+/* ── KEYFRAMES ── */
+@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(5,200,224,.4),0 0 60px rgba(5,200,224,.1);}50%{box-shadow:0 0 40px rgba(5,200,224,.7),0 0 100px rgba(5,200,224,.25);}}
+@keyframes orbitRotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes ringExpand{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.4;}50%{transform:translate(-50%,-50%) scale(1.08);opacity:.7;}}
+@keyframes floatBadge{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+.pulse-dot{display:inline-block;width:8px;height:8px;background:var(--cyan);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+
+/* ── STATS ROW ── */
+.stats-row{display:flex;gap:2.5rem;flex-wrap:wrap;margin-top:2.5rem;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:2.4rem;font-weight:800;color:var(--cyan);line-height:1;text-shadow:0 0 24px rgba(5,200,224,.35);}
+.stat-lbl{font-size:.75rem;color:var(--muted);margin-top:.3rem;letter-spacing:.03em;}
+
+/* ── POR QUÉ ── */
+#porque{background:linear-gradient(135deg,#112233 0%,var(--navy) 100%);max-width:100%;padding:7rem 5% 3.5rem;}
+.porque-inner{max-width:var(--max);margin:0 auto 2rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+.porque-quote{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.1rem,1.8vw,1.4rem);font-weight:700;line-height:1.3;color:var(--white);border-left:3px solid var(--cyan);padding-left:1.2rem;margin-bottom:1rem;}
+.porque-text{color:rgba(255,255,255,.65);line-height:1.7;font-size:.88rem;}
+.porque-stats{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.stat-card{background:rgba(5,200,224,.07);border:1px solid rgba(5,200,224,.15);border-radius:10px;padding:1rem;text-align:center;transition:border-color .3s,transform .3s;}
+.stat-card:hover{border-color:rgba(5,200,224,.4);transform:translateY(-3px);}
+.dif-cont{max-width:var(--max);margin:5rem auto 0;}
+.stat-number{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:800;color:var(--cyan);display:block;line-height:1;margin-bottom:.35rem;text-shadow:0 0 20px rgba(5,200,224,.3);}
+.stat-label{font-size:.75rem;color:var(--gray);letter-spacing:.05em;line-height:1.4;}
+
+/* ── DIFERENCIADOR ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:1.2rem;}
+.metric-card{background:var(--card);border:1px solid var(--cyan2);border-radius:10px;padding:1.1rem;display:flex;align-items:center;gap:1rem;transition:border-color .3s,transform .3s;}
+.metric-card:hover{border-color:rgba(5,200,224,.4);transform:translateY(-3px);}
+.metric-value{font-family:'Barlow Condensed',sans-serif;font-size:1.9rem;font-weight:800;color:var(--cyan);white-space:nowrap;min-width:72px;}
+.metric-desc{font-size:.83rem;color:rgba(255,255,255,.65);line-height:1.5;}
+
+/* ── MODELO ── */
+#modelo{background:#112233;max-width:100%;padding:9rem 5% 6rem;}
+.modelo-inner{max-width:var(--max);margin:0 auto;}
+.modelo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;}
+.servicio-card{background:rgba(255,255,255,.03);border:1px solid var(--cyan2);border-radius:12px;padding:2rem;transition:border-color .3s,transform .3s,box-shadow .3s;}
+.servicio-card:hover{border-color:rgba(5,200,224,.45);transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.3);}
+.servicio-icon{width:48px;height:48px;background:rgba(5,200,224,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-size:1.3rem;}
+.servicio-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;color:var(--white);margin-bottom:.65rem;}
+.servicio-desc{font-size:.82rem;color:var(--gray);line-height:1.65;}
+.capacidades{margin-top:0;display:flex;flex-wrap:wrap;gap:.6rem;}
+.cap-tag{background:rgba(5,200,224,.08);border:1px solid rgba(5,200,224,.2);color:var(--cyan);font-size:.75rem;padding:.4rem .9rem;border-radius:100px;letter-spacing:.03em;transition:opacity .5s ease,background .5s ease,box-shadow .5s ease,border-color .5s ease;opacity:.35;}
+.cap-tag.cap-active{background:rgba(5,200,224,.22);border-color:var(--cyan);opacity:1;box-shadow:0 0 14px rgba(5,200,224,.5),0 0 28px rgba(5,200,224,.2);}
+
+/* ── IFRAME SECTIONS ── */
+.iframe-section{width:100%;overflow:hidden;background:var(--navy);}
+.iframe-section iframe{width:100%;border:none;display:block;}
+.section-header{max-width:var(--max);margin:0 auto;padding:8rem 5% 0;}
+#soluciones-listas,#soluciones-medida,#clientes,#casos,#contacto{scroll-margin-top:64px;}
+.section-header .eyebrow{margin-bottom:.6rem;}
+
+/* ── CASOS ── */
+#casos{padding:3rem 5% 6rem;}
+.casos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:2.5rem;margin-bottom:2.5rem;}
+.caso-card{background:var(--card);border:.5px solid var(--cyan2);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .3s,box-shadow .3s;}
+.caso-card:hover{border-color:rgba(5,200,224,.3);}
+.caso-card.open{border-color:rgba(5,200,224,.28);box-shadow:0 8px 32px rgba(0,0,0,.35);}
+.caso-header{display:flex;align-items:center;gap:12px;padding:14px 18px;user-select:none;}
+.caso-icon{width:38px;height:38px;background:rgba(5,200,224,.1);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.caso-icon svg{width:17px;height:17px;stroke:var(--cyan);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.caso-meta{flex:1;}
+.caso-title{font-size:13.5px;font-weight:700;}
+.caso-seg{font-size:10.5px;color:var(--muted);margin-top:2px;}
+.caso-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;opacity:.5;transition:transform .35s var(--ease);}
+.caso-chevron svg{width:14px;height:14px;stroke:var(--cyan);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.caso-card.open .caso-chevron{transform:rotate(180deg);opacity:1;}
+.caso-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease);}
+.caso-card.open .caso-body{grid-template-rows:1fr;}
+.caso-body-inner{overflow:hidden;}
+.caso-body-content{padding:0 18px 18px;border-top:.5px solid rgba(255,255,255,.06);padding-top:14px;display:flex;flex-direction:column;gap:12px;}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.kpi{background:rgba(5,200,224,.08);border-radius:8px;padding:9px 5px;text-align:center;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--cyan);line-height:1.1;}
+.kpi-lbl{font-size:8.5px;color:var(--muted);margin-top:3px;line-height:1.35;}
+.caso-divider{height:.5px;background:rgba(255,255,255,.07);}
+.caso-problema{font-size:11.5px;color:var(--body);line-height:1.6;}
+.caso-problema strong{color:rgba(255,255,255,.85);}
+.pills{display:flex;flex-wrap:wrap;gap:5px;}
+.pill{font-size:10px;padding:3px 9px;border-radius:99px;border:.5px solid rgba(5,200,224,.28);color:rgba(5,200,224,.82);background:rgba(5,200,224,.06);}
+.roi{font-size:10.5px;font-weight:700;color:var(--cyan);background:rgba(5,200,224,.08);border-left:2px solid var(--cyan);border-radius:0 6px 6px 0;padding:7px 11px;line-height:1.5;}
+
+/* typewriter CTA */
+.leyenda{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:8px;}
+.leyenda-line{width:520px;max-width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(5,200,224,.4),transparent);}
+.leyenda-text{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;color:rgba(255,255,255,.85);letter-spacing:1.5px;text-align:center;}
+.tw-cyan{color:var(--cyan);}
+.cur{display:inline-block;width:3px;height:24px;background:var(--cyan);margin-left:3px;vertical-align:middle;animation:blink .7s step-end infinite;}
+.cur.done{animation:none;opacity:0;}
+
+/* ── CONTACTO ── */
+#contacto{text-align:center;padding:8rem 5%;position:relative;overflow:hidden;}
+#contacto::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(5,200,224,.07) 0%,transparent 70%);pointer-events:none;}
+.cta-eyebrow{font-size:.72rem;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.cta-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,4rem);margin-bottom:1.4rem;line-height:1.05;}
+.cta-title .glow{color:var(--cyan);text-shadow:0 0 50px rgba(5,200,224,.6),0 0 100px rgba(5,200,224,.25);}
+.cta-sub{color:rgba(255,255,255,.6);font-size:1rem;max-width:520px;margin:0 auto 2.5rem;line-height:1.75;}
+.contact-cards{display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin-top:3rem;}
+.contact-card{background:var(--card);border:1px solid var(--cyan2);border-radius:12px;padding:1.4rem 1.8rem;text-decoration:none;transition:all .3s;min-width:170px;}
+.contact-card:hover{border-color:var(--cyan);transform:translateY(-3px);background:rgba(5,200,224,.07);}
+.contact-icon{font-size:1.4rem;margin-bottom:.5rem;display:block;}
+.contact-label{font-size:.68rem;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.3rem;}
+.contact-value{font-size:.83rem;color:var(--white);font-weight:600;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid rgba(5,200,224,.1);padding:1.8rem 5%;display:flex;align-items:center;justify-content:space-between;max-width:100%;}
+.footer-brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1rem;color:rgba(255,255,255,.5);}
+.footer-tag{font-size:.65rem;color:rgba(5,200,224,.55);letter-spacing:.09em;display:block;}
+.footer-copy{font-size:.72rem;color:var(--gray);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <img src="logo.jpg" class="nav-logo-icon" alt="MindBridge" style="height:38px;width:auto;object-fit:contain;">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#porque">Nosotros</a></li>
+    <li><a href="#modelo">Servicios</a></li>
+    <li><a href="#clientes">Clientes</a></li>
+    <li><a href="#casos">Casos de éxito</a></li>
+    <li><a href="#soluciones-listas">Soluciones</a></li>
+    <li><a href="#contacto" class="nav-cta">Hablemos</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <canvas id="particleCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+  <div class="bg-circuit" style="z-index:1;"></div>
+  <div class="hero-grid">
+    <div class="hero-content">
+      <h1 class="fade-up" style="animation-delay:.25s">
+        Experiencia que convierte la
+        <span class="line2"><span id="tw-word" style="color:#05C8E0;"></span><span id="tw-cur" style="color:#05C8E0;animation:blink .8s step-end infinite;">|</span></span>
+        en resultados reales
+      </h1>
+      <p class="hero-sub fade-up" style="animation-delay:.4s">+250 proyectos. 92% tasa de éxito. 15 industrias. Sabemos cómo implementar IA para obtener resultados reales — y lo demostramos con tus números.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- POR QUÉ -->
+<div id="porque" class="sec-full">
+  <div class="porque-inner">
+    <div class="fade-up">
+      <span class="eyebrow">Por qué existimos</span>
+      <div class="porque-quote">"La IA solo genera valor cuando deja de ser una iniciativa tecnológica y se convierte en parte de la estrategia del negocio."</div>
+      <p class="porque-text">MindBridge nace de la convicción de que México y LATAM merecen una consultoría de IA que hable el lenguaje del negocio — no solo el de la tecnología. Con más de 40 años de experiencia directiva en empresas clase mundial, conocemos los retos reales de los líderes que necesitan resultados, no promesas.</p>
+    </div>
+    <div class="porque-stats">
+      <div class="stat-card fade-up"><span class="stat-number">+250</span><span class="stat-label">Proyectos de IA implementados</span></div>
+      <div class="stat-card fade-up"><span class="stat-number">92%</span><span class="stat-label">Tasa de éxito promedio</span></div>
+      <div class="stat-card fade-up"><span class="stat-number">+15</span><span class="stat-label">Industrias atendidas</span></div>
+      <div class="stat-card fade-up"><span class="stat-number">+10</span><span class="stat-label">Funciones de negocio cubiertas</span></div>
+    </div>
+  </div>
+  <div class="dif-cont fade-up">
+    <span class="eyebrow">El gran diferenciador</span>
+    <h2 class="sec-title" style="font-size:clamp(1.2rem,2vw,1.7rem);margin-bottom:.5rem;">Saber cómo implementar IA para obtener <span>resultados reales</span></h2>
+    <p class="sec-sub" style="font-size:.85rem;margin-bottom:0;">No vendemos promesas. Cada proyecto tiene métricas claras y resultados medibles desde el primer mes.</p>
+    <div class="metrics-grid">
+      <div class="metric-card fade-up"><span class="metric-value">+25%</span><span class="metric-desc">Incremento en eficiencia operativa</span></div>
+      <div class="metric-card fade-up"><span class="metric-value">-40%</span><span class="metric-desc">Reducción de costos por errores manuales</span></div>
+      <div class="metric-card fade-up"><span class="metric-value">+40%</span><span class="metric-desc">Mejora de servicio al cliente</span></div>
+      <div class="metric-card fade-up"><span class="metric-value">+70%</span><span class="metric-desc">Monitoreo de tareas y eventos clave</span></div>
+      <div class="metric-card fade-up"><span class="metric-value">+50%</span><span class="metric-desc">Automatización de flujos de trabajo</span></div>
+      <div class="metric-card fade-up"><span class="metric-value">-70%</span><span class="metric-desc">Reducción de tiempo en elaboración de reportes</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- MODELO -->
+<div id="modelo" class="sec-full">
+  <div class="modelo-inner">
+    <span class="eyebrow fade-up">Nuestro modelo de trabajo</span>
+    <h2 class="sec-title fade-up">Resolviendo de la manera más simple <span>los problemas más complejos</span></h2>
+    <p class="sec-sub fade-up">Tres pilares de servicio con capacidades técnicas de primer nivel y talento que ejecuta.</p>
+    <div class="modelo-grid">
+      <div class="servicio-card fade-up"><div class="servicio-icon">🎯</div><div class="servicio-title">Consultoría Especializada</div><div class="servicio-desc">Diagnóstico, estrategia y acompañamiento en implementación de IA. Hablamos el lenguaje del negocio, no solo el de la tecnología.</div></div>
+      <div class="servicio-card fade-up"><div class="servicio-icon">⚡</div><div class="servicio-title">Soluciones Listas para Usarse</div><div class="servicio-desc">Portafolio de soluciones de IA probadas y listas para implementar en tu empresa. Tiempo de despliegue mínimo, impacto máximo.</div></div>
+      <div class="servicio-card fade-up"><div class="servicio-icon">🔧</div><div class="servicio-title">Desarrollo a la Medida</div><div class="servicio-desc">Soluciones diseñadas específicamente para tus retos de negocio. Arquitectura de datos AI Ready + ingeniería de software de primer nivel.</div></div>
+    </div>
+    <p class="fade-up" style="color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:.04em;margin-top:6rem;margin-bottom:3rem;">Capacidades digitales y ejecutivas de vanguardia</p>
+    <div class="capacidades">
+      <span class="cap-tag">IA Generativa Grado Empresarial</span><span class="cap-tag">IA Predictiva y Prescriptiva</span><span class="cap-tag">Agentes de IA y Automatización</span><span class="cap-tag">Arquitectura de Datos AI Ready</span><span class="cap-tag">Desarrollo de Software AI Driven</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CLIENTES — iframe con logos reales -->
+<div id="clientes">
+  <div class="section-header fade-up" style="padding-top:3.5rem;">
+    <span class="eyebrow">Clientes</span>
+    <h2 class="sec-title">Las empresas más exigentes de México <span>confían en nosotros</span></h2>
+    <p class="sec-sub">Más de 250 proyectos en empresas AAA de México y LATAM.</p>
+  </div>
+  <div class="iframe-section">
+    <iframe src="clientes.html" height="720" scrolling="no" title="Clientes MindBridge"></iframe>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CASOS -->
+<section id="casos">
+  <span class="eyebrow fade-up">Casos de éxito</span>
+  <h2 class="sec-title fade-up">IA que genera resultados reales <span>— en tu industria</span></h2>
+  <p class="sec-sub fade-up">Implementaciones documentadas con métricas reales. Sin promesas — solo números.</p>
+  <div class="casos-grid">
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="caso-meta"><div class="caso-title">Atención al cliente</div><div class="caso-seg">Servicios · Retail · Fintech</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">&lt;4 min</div><div class="kpi-lbl">Tiempo respuesta</div></div><div class="kpi"><div class="kpi-val">65%</div><div class="kpi-lbl">Sin agente humano</div></div><div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Costo operativo</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> 60–70% de tickets eran preguntas repetitivas. Triaje manual, clientes esperando hasta 36 h, CSAT en caída libre.</p>
+        <div class="pills"><span class="pill">Chatbot generativo 24/7</span><span class="pill">Clasificación automática</span><span class="pill">AI Copilot para agentes</span></div>
+        <div class="roi">ROI en menos de 6 meses — costo IA: $0.25–$0.50 vs $3–$6 por interacción humana</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div class="caso-meta"><div class="caso-title">Finanzas y contabilidad</div><div class="caso-seg">Empresa mediana · 50–250 empleados</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">-85%</div><div class="kpi-lbl">Tiempo conciliaciones</div></div><div class="kpi"><div class="kpi-val">-95%</div><div class="kpi-lbl">Errores contables</div></div><div class="kpi"><div class="kpi-val">450%</div><div class="kpi-lbl">ROI primer año</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> Cierre mensual de 12 días con 2.5 FTEs. Flujo de caja impredecible. CFO enterrado en hojas de cálculo.</p>
+        <div class="pills"><span class="pill">Conciliación automática</span><span class="pill">Detección de anomalías</span><span class="pill">FP&amp;A predictivo</span></div>
+        <div class="roi">De 12 días a 3 días de cierre · 93% precisión en pronóstico de caja</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><div class="caso-meta"><div class="caso-title">Ventas PyME</div><div class="caso-seg">Servicios / Comercial · 10–50 empleados</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">+35%</div><div class="kpi-lbl">Leads generados</div></div><div class="kpi"><div class="kpi-val">-40%</div><div class="kpi-lbl">Carga operativa</div></div><div class="kpi"><div class="kpi-val">&lt;1 min</div><div class="kpi-lbl">Tiempo respuesta</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> 35–40% de consultas fuera de horario se perdían. Vendedores respondiendo FAQ en lugar de cerrar negocios.</p>
+        <div class="pills"><span class="pill">Chatbot WhatsApp + web</span><span class="pill">Scoring automático</span><span class="pill">CRM con nurturing IA</span></div>
+        <div class="roi">ROI positivo en &lt;90 días · desde $4,500 MXN/mes sistema completo</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="caso-meta"><div class="caso-title">Recursos Humanos</div><div class="caso-seg">100–5,000 empleados · CHRO / TA</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">-75%</div><div class="kpi-lbl">Tiempo screening</div></div><div class="kpi"><div class="kpi-val">95%</div><div class="kpi-lbl">Precisión rotación</div></div><div class="kpi"><div class="kpi-val">-52%</div><div class="kpi-lbl">Rotación no deseada</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> 13 h/semana por reclutador en screening manual. Decisiones subjetivas. Rotación impredecible.</p>
+        <div class="pills"><span class="pill">Filtrado inteligente NLP</span><span class="pill">Evaluación continua IA</span><span class="pill">Predicción de rotación</span></div>
+        <div class="roi">Evitar 3 salidas de $200K MXN/año = $900K MXN ahorrados</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="caso-meta"><div class="caso-title">Pricing inteligente</div><div class="caso-seg">CPG · Retail · Manufactura · Distribución</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">+3–8%</div><div class="kpi-lbl">Margen bruto</div></div><div class="kpi"><div class="kpi-val">96%</div><div class="kpi-lbl">Exactitud modelo</div></div><div class="kpi"><div class="kpi-val">+15%</div><div class="kpi-lbl">Ventas netas</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> Millones de combinaciones SKU × tienda imposibles de gestionar en SAP. Precio único sacrifica margen o volumen.</p>
+        <div class="pills"><span class="pill">Elasticidad SKU × PDV</span><span class="pill">Agente IA comercial</span><span class="pill">Revenue management</span></div>
+        <div class="roi">ROI desde primer trimestre · opera sobre SAP / POS / ERP existente</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="caso-meta"><div class="caso-title">Detección de fraude</div><div class="caso-seg">Banca · Fintech · SOFOM</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">+50%</div><div class="kpi-lbl">Fraudes detectados</div></div><div class="kpi"><div class="kpi-val">-60%</div><div class="kpi-lbl">Falsos positivos</div></div><div class="kpi"><div class="kpi-val">&lt;50 ms</div><div class="kpi-lbl">Tiempo alerta</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> Reglas estáticas con hasta 95% de falsos positivos. Fraude detectado horas después del evento.</p>
+        <div class="pills"><span class="pill">Scoring transaccional ML</span><span class="pill">Protección de lealtad</span><span class="pill">Alertas en tiempo real</span></div>
+        <div class="roi">ROI 3× en primer año · detección preventiva 48 h antes del fraude coordinado</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="caso-meta"><div class="caso-title">Churn y retención</div><div class="caso-seg">Banca · Retail · Tarjetas</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Tasa de churn</div></div><div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Costo retención</div></div><div class="kpi"><div class="kpi-val">&lt;24 h</div><div class="kpi-lbl">Reacción señal</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> Churn anual del 15–25% con reacción tardía. Campañas genéricas con 8–12% de conversión.</p>
+        <div class="pills"><span class="pill">Scoring predictivo AUC 0.93</span><span class="pill">Estrategia con IA generativa</span><span class="pill">Loop cerrado automatizado</span></div>
+        <div class="roi">Adquirir un cliente cuesta 5–7× más que retenerlo · conversión +2.4×</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><circle cx="12" cy="12" r="10"/></svg></div><div class="caso-meta"><div class="caso-title">Hipersegmentación</div><div class="caso-seg">Banca · Retail · Manufactura</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">+40%</div><div class="kpi-lbl">Conversión campañas</div></div><div class="kpi"><div class="kpi-val">+25%</div><div class="kpi-lbl">Ticket promedio</div></div><div class="kpi"><div class="kpi-val">-20%</div><div class="kpi-lbl">Costo servicio</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> Segmentación plana de 3–5 grupos agrupa clientes con comportamientos opuestos. Cross-sell invisible.</p>
+        <div class="pills"><span class="pill">Clustering conductual ML</span><span class="pill">20–80 microsegmentos dinámicos</span><span class="pill">Activación por canal y producto</span></div>
+        <div class="roi">+18 pts NPS promedio · primer microsegmento productivo en 6–8 semanas</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div><div class="caso-meta"><div class="caso-title">RFM y optimización de promociones</div><div class="caso-seg">Retail · Banca · Programas de lealtad</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">+18%</div><div class="kpi-lbl">Promotion lift</div></div><div class="kpi"><div class="kpi-val">-25%</div><div class="kpi-lbl">Costo promoción</div></div><div class="kpi"><div class="kpi-val">+12%</div><div class="kpi-lbl">Margen neto</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> Descuentos malgastados en clientes que comprarían de todas formas. Sin RFM no se discrimina entre el cliente activo y el dormido.</p>
+        <div class="pills"><span class="pill">Segmentación RFM con ML</span><span class="pill">Copiloto IA promocional</span><span class="pill">Optimización de descuento</span></div>
+        <div class="roi">+14% frecuencia de compra · ROI positivo desde la primera campaña optimizada</div>
+      </div></div></div>
+    </div>
+
+    <div class="caso-card fade-up">
+      <div class="caso-header"><div class="caso-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="caso-meta"><div class="caso-title">CPFR y Demand Planning</div><div class="caso-seg">Manufactura · Retail · Distribución / CPG</div></div><div class="caso-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+      <div class="caso-body"><div class="caso-body-inner"><div class="caso-body-content">
+        <div class="kpis"><div class="kpi"><div class="kpi-val">-15/20%</div><div class="kpi-lbl">Inventarios</div></div><div class="kpi"><div class="kpi-val">+15 pts</div><div class="kpi-lbl">Nivel de servicio</div></div><div class="kpi"><div class="kpi-val">-30%</div><div class="kpi-lbl">Mejora MAPE</div></div></div>
+        <div class="caso-divider"></div>
+        <p class="caso-problema"><strong>Problema:</strong> MAPE del 35–50% con métodos tradicionales. Inventarios de 60–90 días como colchón. Fill rate en 85–90% cuando el objetivo es 98%+.</p>
+        <div class="pills"><span class="pill">Forecast ML multivariable</span><span class="pill">Stock de seguridad óptimo</span><span class="pill">CPFR colaborativo con IA</span><span class="pill">Copiloto S&amp;OP</span></div>
+        <div class="roi">-25% días inventario · -30% fletes urgentes · -40% merma · ROI en 6–9 meses</div>
+      </div></div></div>
+    </div>
+
+  </div>
+  <!-- CTA typewriter -->
+  <div id="casos-leyenda" style="opacity:0;transition:opacity .6s;">
+    <div class="leyenda">
+      <div class="leyenda-line"></div>
+      <div class="leyenda-text"><span id="tw-before"></span><span id="tw-cyan" class="tw-cyan"></span><span class="cur" id="tw-cur2"></span></div>
+      <div class="leyenda-line"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SOLUCIONES LISTAS — iframe con logos reales -->
+<div id="soluciones-listas">
+  <div class="section-header fade-up" style="padding-top:5rem;">
+    <h2 class="sec-title">IA aplicada a problemas reales <span>desde el primer día</span></h2>
+    <p class="sec-sub">Portafolio de soluciones de nuestros socios tecnológicos, probadas en empresas reales y listas para escalar.</p>
+  </div>
+  <div class="iframe-section" style="margin-top:-9rem;">
+    <iframe src="soluciones-listas.html" height="720" scrolling="no" title="Soluciones listas MindBridge"></iframe>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SOLUCIONES A LA MEDIDA — iframe con logos reales -->
+<div id="soluciones-medida">
+  <div class="section-header fade-up">
+    <span class="eyebrow">Soluciones a la medida</span>
+    <h2 class="sec-title">Cuando el problema es único, <span>la solución también lo es</span></h2>
+  </div>
+  <div class="iframe-section">
+    <iframe src="medida.html" height="720" scrolling="no" title="Soluciones a la medida MindBridge"></iframe>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="cta-eyebrow fade-up"><span class="pulse-dot"></span>Estamos listos</div>
+  <h2 class="cta-title fade-up">Listos para <span class="glow">IMPULSAR</span> tu empresa a otro nivel</h2>
+  <p class="cta-sub fade-up">Conversemos. Sin compromiso, con claridad. En 30 minutos te mostramos cómo la IA puede generar resultados reales en tu empresa específica.</p>
+  <div class="fade-up">
+    <a href="mailto:contacto@mindbridge.com.mx" class="btn-primary glow" style="font-size:1rem;padding:1rem 2.5rem;">Agenda una conversación</a>
+  </div>
+  <div class="contact-cards fade-up">
+    <a href="mailto:contacto@mindbridge.com.mx" class="contact-card">
+      <span class="contact-icon">✉️</span><span class="contact-label">Email</span><span class="contact-value">contacto@mindbridge.com.mx</span>
+    </a>
+    <a href="https://www.linkedin.com/in/juan-carlos-alvarez-guerrero" target="_blank" class="contact-card">
+      <span class="contact-icon">💼</span><span class="contact-label">LinkedIn</span><span class="contact-value">Juan Carlos Álvarez</span>
+    </a>
+    <a href="https://mindbridge.com.mx" target="_blank" class="contact-card">
+      <span class="contact-icon">🌐</span><span class="contact-label">Website</span><span class="contact-value">mindbridge.com.mx</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg width="30" height="30" viewBox="0 0 44 44" fill="none">
+      <circle cx="22" cy="22" r="20" stroke="#05C8E0" stroke-width="1.8" fill="none"/>
+      <path d="M22 8 C14 8 8 14.5 8 22 C8 29.5 14 36 22 36 C17 33 13.5 27.5 13.5 22 C13.5 16.5 17 11 22 8Z" fill="#05C8E0"/>
+      <rect x="22" y="27" width="3.5" height="6" rx="0.8" fill="#FFFFFF"/>
+      <rect x="26.5" y="23" width="3.5" height="10" rx="0.8" fill="#FFFFFF"/>
+      <rect x="31" y="18" width="3.5" height="15" rx="0.8" fill="#FFFFFF"/>
+    </svg>
+    <div><span class="footer-brand">MIND BRIDGE</span><span class="footer-tag">smart tech · human sense</span></div>
+  </div>
+  <span class="footer-copy">© 2026 MindBridge. Todos los derechos reservados.</span>
+</footer>
+
+<script>
+// ── PARTICLE NETWORK ──
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+const COUNT = 70, DIST = 140, CYAN = '5,200,224';
+function resize(){ canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+resize(); window.addEventListener('resize', () => { resize(); initP(); });
+function Particle(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=(Math.random()-.5)*.4; this.vy=(Math.random()-.5)*.4; this.r=Math.random()*2+1; this.a=Math.random()*.5+.3; }
+Particle.prototype.update=function(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx*=-1; if(this.y<0||this.y>canvas.height)this.vy*=-1; };
+Particle.prototype.draw=function(){ ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=`rgba(${CYAN},${this.a})`; ctx.shadowBlur=8; ctx.shadowColor=`rgba(${CYAN},.6)`; ctx.fill(); ctx.shadowBlur=0; };
+function initP(){ particles=[]; for(let i=0;i<COUNT;i++) particles.push(new Particle()); }
+initP();
+function drawLines(){ for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<DIST){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(${CYAN},${(1-d/DIST)*.25})`;ctx.lineWidth=.8;ctx.stroke();}}} }
+function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); drawLines(); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
+animate();
+
+// ── TYPEWRITER HERO ──
+const words = ['inteligencia artificial','automatización','innovación'];
+let wi=0,ci=0,del=false;
+const twEl = document.getElementById('tw-word');
+function typeW(){
+  const cur=words[wi];
+  if(!del){ twEl.textContent=cur.substring(0,ci+1); ci++; if(ci===cur.length){del=true;setTimeout(typeW,1800);return;} }
+  else { twEl.textContent=cur.substring(0,ci-1); ci--; if(ci===0){del=false;wi=(wi+1)%words.length;} }
+  setTimeout(typeW,del?55:100);
+}
+typeW();
+
+// ── ACCORDION CASOS ──
+document.querySelectorAll('.caso-card').forEach(card=>{
+  card.querySelector('.caso-header').addEventListener('click',()=>{
+    const open=card.classList.contains('open');
+    document.querySelectorAll('.caso-card').forEach(c=>c.classList.remove('open'));
+    if(!open) card.classList.add('open');
+  });
+});
+
+// ── FADE UP OBSERVER ──
+const fadeObs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*80); fadeObs.unobserve(e.target); }
+  });
+},{threshold:.1});
+document.querySelectorAll('.fade-up').forEach(el=>fadeObs.observe(el));
+
+// ── COUNTER ANIMATION ──
+function animateCounter(el){
+  const raw=el.dataset.target||el.textContent.trim();
+  el.dataset.target=raw;
+  const prefix=raw.match(/^[+\-]/)?raw[0]:'';
+  const suffix=raw.includes('%')?'%':'';
+  const num=parseFloat(raw.replace(/[+\-%]/g,''));
+  const duration=6400;
+  const start=performance.now();
+  function tick(now){
+    const t=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-t,3);
+    el.textContent=prefix+Math.round(num*ease)+suffix;
+    if(t<1) requestAnimationFrame(tick);
+    else el.textContent=raw;
+  }
+  requestAnimationFrame(tick);
+}
+
+// ── SCROLL REVEAL (cards) ──
+const cardObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.opacity='1'; e.target.style.transform='translateY(0)';
+      const numEl=e.target.querySelector('.stat-number,.metric-value');
+      if(numEl) setTimeout(()=>animateCounter(numEl),120);
+    }
+  });
+},{threshold:.1});
+document.querySelectorAll('.metric-card,.servicio-card,.stat-card').forEach(el=>{
+  el.style.opacity='0'; el.style.transform='translateY(20px)';
+  el.style.transition='opacity .55s ease, transform .55s ease';
+  cardObs.observe(el);
+});
+
+// ── CAPACIDADES SPOTLIGHT ──
+(function(){
+  const tags=[...document.querySelectorAll('.cap-tag')];
+  if(!tags.length) return;
+  let idx=0;
+  function spotlight(){
+    tags.forEach(t=>t.classList.remove('cap-active'));
+    tags[idx].classList.add('cap-active');
+    idx=(idx+1)%tags.length;
+  }
+  spotlight();
+  setInterval(spotlight,1800);
+})();
+
+// ── TYPEWRITER CASOS CTA ──
+const leyEl=document.getElementById('casos-leyenda');
+const leyObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ leyEl.style.opacity='1'; startTW(); leyObs.unobserve(e.target); }
+  });
+},{threshold:.5});
+leyObs.observe(leyEl);
+function startTW(){
+  const p1="Nos encantaría darte más detalle de ",p2="los casos de tu interés.";
+  const eB=document.getElementById('tw-before'),eC=document.getElementById('tw-cyan'),cur=document.getElementById('tw-cur2');
+  const full=p1+p2; let i=0;
+  setTimeout(function t(){ if(i<full.length){ if(i<p1.length)eB.textContent+=full[i]; else eC.textContent+=full[i]; i++; setTimeout(t,50+Math.random()*28); }else{setTimeout(()=>cur.classList.add('done'),900);} },400);
+}
+
+// ── ACTIVE NAV ──
+const secs=document.querySelectorAll('[id]');
+const navAs=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-80)cur=s.id;});
+  navAs.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+},{passive:true});
+</script>
+</body>
+</html>
