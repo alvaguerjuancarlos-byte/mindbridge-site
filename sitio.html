@@ -1206,107 +1206,128 @@
   applyMobileGrids();
   window.addEventListener('resize', applyMobileGrids);
 
-  // ── RED DE NODOS DEL HERO ──
+  // ── SONAR DEL HERO: blanco de 3 anillos + barrido 360° ──
+  // Reemplaza la red de puntos al azar por algo deliberado: enfoque, no ruido.
+  // Puntos más grandes cerca del centro, más pequeños hacia afuera -- la idea
+  // de "dar en el blanco". El barrido gira completo porque todo el blanco
+  // (anillos + radio del barrido) vive contenido en una zona que nunca
+  // alcanza el bloque de texto, a diferencia de la primera versión.
   (function() {
     var canvas = document.getElementById('hero-network');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     var hero = document.querySelector('.hero');
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var particles = [];
     var raf = null;
     var running = false;
     var W = 0, H = 0;
 
-    var LINK_DIST = 180;
     var LINE_COLOR = '0,168,188';   // --teal
     var DOT_COLOR = '125,220,232';  // --teal-light
     var PULSE_COLOR = '255,255,255';
-    var pulses = [];
-    var nextPulseAt = 0;
-    var MAX_PULSES = 9;
-
-    // Barrido tipo sonar de sector: una línea oscila de un lado a otro dentro
-    // de un arco a la derecha del centro (nunca apunta hacia el texto, a
-    // diferencia de un giro completo de 360°); cuando cruza un nodo, dispara
-    // un "ping" -- el anillo que se expande, como un submarino detectando algo.
-    var SWEEP_SPEED = 0.006;
-    var SWEEP_WIDTH = 0.4;
-    var SWEEP_MIN = -1.48;   // ~-85°, casi derecho hacia arriba
-    var SWEEP_MAX = 1.48;    // ~85°, casi derecho hacia abajo -- nunca hacia la izquierda (texto)
-    var sweepAngle = SWEEP_MIN;
-    var sweepDir = 1;
-    var sweepCx = 0, sweepCy = 0, sweepRadius = 0;
     var pings = [];
 
+    var SWEEP_SPEED = 0.007;
+    var sweepAngle = 0;
+    var tCx = 0, tCy = 0, tR = 0;
+    var rings = [];   // [{radius, dots:[{angle,size}]}]
+
     function angleInSweep(angle, prevA, newA) {
-      var lo = Math.min(prevA, newA), hi = Math.max(prevA, newA);
-      return angle >= lo && angle <= hi;
+      var TWO_PI = Math.PI * 2;
+      angle = ((angle % TWO_PI) + TWO_PI) % TWO_PI;
+      prevA = ((prevA % TWO_PI) + TWO_PI) % TWO_PI;
+      newA = ((newA % TWO_PI) + TWO_PI) % TWO_PI;
+      if (prevA <= newA) return angle >= prevA && angle <= newA;
+      return angle >= prevA || angle <= newA;
     }
 
-    function particleCount() {
-      return W < 700 ? 26 : 58;
-    }
-
-    function makeParticles() {
-      var n = particleCount();
-      particles = [];
-      for (var i = 0; i < n; i++) {
-        particles.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25
-        });
-      }
-      pulses = [];
+    function buildRings() {
+      var specs = [
+        { frac: 0.38, count: 5, size: 5.0 },
+        { frac: 0.68, count: 8, size: 3.3 },
+        { frac: 1.00, count: 13, size: 2.1 }
+      ];
+      rings = specs.map(function(spec, ri) {
+        var dots = [];
+        var phase = ri * 0.35;
+        for (var i = 0; i < spec.count; i++) {
+          dots.push({ angle: phase + (i / spec.count) * Math.PI * 2, size: spec.size });
+        }
+        return { radius: tR * spec.frac, dots: dots };
+      });
     }
 
     function resize() {
       W = canvas.width = hero.clientWidth;
       H = canvas.height = hero.clientHeight;
-      sweepCx = W * 0.72;
-      sweepCy = H * 0.6;
-      sweepRadius = Math.sqrt(W * W + H * H) * 0.55;
-      sweepAngle = SWEEP_MIN;
-      sweepDir = 1;
+      if (W < 700) {
+        tCx = W * 0.5; tCy = H * 0.88;
+        tR = Math.min(W * 0.32, H * 0.14, 110);
+      } else {
+        tCx = W * 0.82; tCy = H * 0.55;
+        tR = Math.min(W * 0.14, H * 0.32, 200);
+      }
+      sweepAngle = 0;
       pings = [];
-      makeParticles();
+      buildRings();
     }
 
-    // Impulsos de luz que recorren una conexión activa -- la idea de "datos
-    // fluyendo por una red", más explícita que solo puntos+líneas estáticos.
-    function maybeSpawnPulse(links, now) {
-      if (now < nextPulseAt || pulses.length >= MAX_PULSES || !links.length) return;
-      var link = links[(Math.random() * links.length) | 0];
-      pulses.push({ p: link.p, q: link.q, t: 0, speed: 0.014 + Math.random() * 0.01 });
-      nextPulseAt = now + 150 + Math.random() * 220;
+    function drawTarget() {
+      // Anillos guía, muy tenues -- referencia visual tipo radar/mira.
+      for (var r = 0; r < rings.length; r++) {
+        ctx.beginPath();
+        ctx.arc(tCx, tCy, rings[r].radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(' + LINE_COLOR + ',0.22)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      // Centro del blanco.
+      ctx.save();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(' + DOT_COLOR + ',1)';
+      ctx.beginPath();
+      ctx.arc(tCx, tCy, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + PULSE_COLOR + ',0.9)';
+      ctx.fill();
+      ctx.restore();
+      // Puntos por anillo -- más grandes cerca del centro.
+      for (var r = 0; r < rings.length; r++) {
+        var ring = rings[r];
+        for (var i = 0; i < ring.dots.length; i++) {
+          var d = ring.dots[i];
+          var x = tCx + Math.cos(d.angle) * ring.radius;
+          var y = tCy + Math.sin(d.angle) * ring.radius;
+          ctx.beginPath();
+          ctx.arc(x, y, d.size, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.9)';
+          ctx.fill();
+        }
+      }
     }
 
     function step(now) {
       ctx.clearRect(0, 0, W, H);
-      var links = [];
+      drawTarget();
 
-      // Barrido de sonar (capa de fondo, detrás de la red).
+      // Barrido de sonar: giro completo, acotado al radio del blanco.
       var prevSweepAngle = sweepAngle;
-      sweepAngle += SWEEP_SPEED * sweepDir;
-      if (sweepAngle > SWEEP_MAX) { sweepAngle = SWEEP_MAX; sweepDir = -1; }
-      if (sweepAngle < SWEEP_MIN) { sweepAngle = SWEEP_MIN; sweepDir = 1; }
+      sweepAngle += SWEEP_SPEED;
       ctx.save();
-      var segs = 16;
+      var segs = 18;
+      var SWEEP_WIDTH = 0.55;
       for (var s = 0; s < segs; s++) {
         var frac = s / segs;
-        var a = sweepAngle - SWEEP_WIDTH * (1 - frac) * sweepDir;
+        var a = sweepAngle - SWEEP_WIDTH * (1 - frac);
         ctx.beginPath();
-        ctx.moveTo(sweepCx, sweepCy);
-        ctx.lineTo(sweepCx + Math.cos(a) * sweepRadius, sweepCy + Math.sin(a) * sweepRadius);
-        ctx.strokeStyle = 'rgba(' + DOT_COLOR + ',' + (0.32 * frac * frac) + ')';
+        ctx.moveTo(tCx, tCy);
+        ctx.lineTo(tCx + Math.cos(a) * tR, tCy + Math.sin(a) * tR);
+        ctx.strokeStyle = 'rgba(' + DOT_COLOR + ',' + (0.35 * frac * frac) + ')';
         ctx.lineWidth = 1.4;
         ctx.stroke();
       }
       ctx.beginPath();
-      ctx.moveTo(sweepCx, sweepCy);
-      ctx.lineTo(sweepCx + Math.cos(sweepAngle) * sweepRadius, sweepCy + Math.sin(sweepAngle) * sweepRadius);
+      ctx.moveTo(tCx, tCy);
+      ctx.lineTo(tCx + Math.cos(sweepAngle) * tR, tCy + Math.sin(sweepAngle) * tR);
       ctx.shadowBlur = 12;
       ctx.shadowColor = 'rgba(' + DOT_COLOR + ',1)';
       ctx.strokeStyle = 'rgba(' + PULSE_COLOR + ',0.85)';
@@ -1314,82 +1335,26 @@
       ctx.stroke();
       ctx.restore();
 
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > W) p.vx *= -1;
-        if (p.y < 0 || p.y > H) p.vy *= -1;
-
-        var dxs = p.x - sweepCx, dys = p.y - sweepCy;
-        if (Math.sqrt(dxs * dxs + dys * dys) <= sweepRadius &&
-            angleInSweep(Math.atan2(dys, dxs), prevSweepAngle, sweepAngle)) {
-          pings.push({ x: p.x, y: p.y, t: 0 });
-        }
-      }
-
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        for (var j = i + 1; j < particles.length; j++) {
-          var q = particles[j];
-          var dx = p.x - q.x, dy = p.y - q.y;
-          var dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < LINK_DIST) {
-            links.push({ p: p, q: q, dist: dist });
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            ctx.strokeStyle = 'rgba(' + LINE_COLOR + ',' + (0.38 * (1 - dist / LINK_DIST)) + ')';
-            ctx.lineWidth = 1.2;
-            ctx.stroke();
+      // Pings: el barrido "detecta" un punto del blanco al cruzar su ángulo.
+      for (var r = 0; r < rings.length; r++) {
+        var ring = rings[r];
+        for (var i = 0; i < ring.dots.length; i++) {
+          var d = ring.dots[i];
+          if (angleInSweep(d.angle, prevSweepAngle, sweepAngle)) {
+            pings.push({
+              x: tCx + Math.cos(d.angle) * ring.radius,
+              y: tCy + Math.sin(d.angle) * ring.radius,
+              t: 0
+            });
           }
         }
       }
-
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.9)';
-        ctx.fill();
-      }
-
-      maybeSpawnPulse(links, now || 0);
-      for (var k = pulses.length - 1; k >= 0; k--) {
-        var pu = pulses[k];
-        pu.t += pu.speed;
-        if (pu.t >= 1) { pulses.splice(k, 1); continue; }
-        var fade = pu.t < 0.12 ? pu.t / 0.12 : (pu.t > 0.85 ? (1 - pu.t) / 0.15 : 1);
-
-        // Estela: varios puntos que se desvanecen detrás de la cabeza del pulso.
-        for (var s = 4; s >= 1; s--) {
-          var tt = pu.t - s * 0.02;
-          if (tt < 0) continue;
-          var sx = pu.p.x + (pu.q.x - pu.p.x) * tt;
-          var sy = pu.p.y + (pu.q.y - pu.p.y) * tt;
-          ctx.beginPath();
-          ctx.arc(sx, sy, 4 - s * 0.6, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(' + DOT_COLOR + ',' + (fade * 0.35 * (1 - s / 5)) + ')';
-          ctx.fill();
-        }
-
-        var x = pu.p.x + (pu.q.x - pu.p.x) * pu.t;
-        var y = pu.p.y + (pu.q.y - pu.p.y) * pu.t;
-        ctx.save();
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = 'rgba(' + DOT_COLOR + ',1)';
-        ctx.beginPath();
-        ctx.arc(x, y, 4.5, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + PULSE_COLOR + ',' + fade + ')';
-        ctx.fill();
-        ctx.restore();
-      }
-
       for (var pi = pings.length - 1; pi >= 0; pi--) {
         var pg = pings[pi];
-        pg.t += 0.035;
+        pg.t += 0.04;
         if (pg.t >= 1) { pings.splice(pi, 1); continue; }
         ctx.beginPath();
-        ctx.arc(pg.x, pg.y, 4 + pg.t * 26, 0, Math.PI * 2);
+        ctx.arc(pg.x, pg.y, 3 + pg.t * 20, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(' + PULSE_COLOR + ',' + ((1 - pg.t) * 0.8) + ')';
         ctx.lineWidth = 1.5;
         ctx.stroke();
@@ -1415,13 +1380,7 @@
     if (reduceMotion) {
       // Un solo frame estático, sin loop -- respeta prefers-reduced-motion.
       ctx.clearRect(0, 0, W, H);
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.9)';
-        ctx.fill();
-      }
+      drawTarget();
     } else {
       start();
       document.addEventListener('visibilitychange', function() {
