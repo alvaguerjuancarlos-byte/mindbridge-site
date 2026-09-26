@@ -137,7 +137,7 @@
   .hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: rgba(0,0,0,0.15);
+    background: rgba(0,0,0,0.25);
     pointer-events: none;
     z-index: 0;
   }
@@ -1218,12 +1218,16 @@
     var running = false;
     var W = 0, H = 0;
 
-    var LINK_DIST = 170;
+    var LINK_DIST = 180;
     var LINE_COLOR = '0,168,188';   // --teal
     var DOT_COLOR = '125,220,232';  // --teal-light
+    var PULSE_COLOR = '255,255,255';
+    var pulses = [];
+    var nextPulseAt = 0;
+    var MAX_PULSES = 9;
 
     function particleCount() {
-      return W < 700 ? 25 : 55;
+      return W < 700 ? 26 : 58;
     }
 
     function makeParticles() {
@@ -1237,6 +1241,7 @@
           vy: (Math.random() - 0.5) * 0.25
         });
       }
+      pulses = [];
     }
 
     function resize() {
@@ -1245,31 +1250,83 @@
       makeParticles();
     }
 
-    function step() {
+    // Impulsos de luz que recorren una conexión activa -- la idea de "datos
+    // fluyendo por una red", más explícita que solo puntos+líneas estáticos.
+    function maybeSpawnPulse(links, now) {
+      if (now < nextPulseAt || pulses.length >= MAX_PULSES || !links.length) return;
+      var link = links[(Math.random() * links.length) | 0];
+      pulses.push({ p: link.p, q: link.q, t: 0, speed: 0.014 + Math.random() * 0.01 });
+      nextPulseAt = now + 150 + Math.random() * 220;
+    }
+
+    function step(now) {
       ctx.clearRect(0, 0, W, H);
+      var links = [];
+
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
         p.x += p.vx; p.y += p.vy;
         if (p.x < 0 || p.x > W) p.vx *= -1;
         if (p.y < 0 || p.y > H) p.vy *= -1;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.85)';
-        ctx.fill();
+      }
+
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
         for (var j = i + 1; j < particles.length; j++) {
           var q = particles[j];
           var dx = p.x - q.x, dy = p.y - q.y;
           var dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < LINK_DIST) {
+            links.push({ p: p, q: q, dist: dist });
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(q.x, q.y);
-            ctx.strokeStyle = 'rgba(' + LINE_COLOR + ',' + (0.28 * (1 - dist / LINK_DIST)) + ')';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(' + LINE_COLOR + ',' + (0.38 * (1 - dist / LINK_DIST)) + ')';
+            ctx.lineWidth = 1.2;
             ctx.stroke();
           }
         }
       }
+
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.9)';
+        ctx.fill();
+      }
+
+      maybeSpawnPulse(links, now || 0);
+      for (var k = pulses.length - 1; k >= 0; k--) {
+        var pu = pulses[k];
+        pu.t += pu.speed;
+        if (pu.t >= 1) { pulses.splice(k, 1); continue; }
+        var fade = pu.t < 0.12 ? pu.t / 0.12 : (pu.t > 0.85 ? (1 - pu.t) / 0.15 : 1);
+
+        // Estela: varios puntos que se desvanecen detrás de la cabeza del pulso.
+        for (var s = 4; s >= 1; s--) {
+          var tt = pu.t - s * 0.02;
+          if (tt < 0) continue;
+          var sx = pu.p.x + (pu.q.x - pu.p.x) * tt;
+          var sy = pu.p.y + (pu.q.y - pu.p.y) * tt;
+          ctx.beginPath();
+          ctx.arc(sx, sy, 4 - s * 0.6, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + DOT_COLOR + ',' + (fade * 0.35 * (1 - s / 5)) + ')';
+          ctx.fill();
+        }
+
+        var x = pu.p.x + (pu.q.x - pu.p.x) * pu.t;
+        var y = pu.p.y + (pu.q.y - pu.p.y) * pu.t;
+        ctx.save();
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = 'rgba(' + DOT_COLOR + ',1)';
+        ctx.beginPath();
+        ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + PULSE_COLOR + ',' + fade + ')';
+        ctx.fill();
+        ctx.restore();
+      }
+
       if (running) raf = requestAnimationFrame(step);
     }
 
@@ -1293,8 +1350,8 @@
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.85)';
+        ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.9)';
         ctx.fill();
       }
     } else {
