@@ -320,6 +320,36 @@ No hay un estándar de 44×44px aplicado deliberadamente. El botón de hamburgue
 `background: var(--white) o var(--bone); border: 0.5px solid var(--border); border-radius: var(--border-radius-lg) /* 12px */; padding: 1–2.5rem;` — sin sombra en reposo, borde cambia a `var(--teal-mid)` o `var(--teal)` en hover/activo.
 
 ### Antes de tocar el sitio
-1. Verificar sha256 de `sitio.html` local contra `https://mindbridge.com.mx/sitio.html` (ver memoria del proyecto) — no asumir que el repo local está desplegado.
+1. Verificar sha256 de `sitio.html` local contra `https://mindbridge.com.mx/sitio.html` (ver memoria del proyecto) — no asumir que el repo local está desplegado. **Ojo:** `mindbridge.com.mx` hace 308 redirect a `www.mindbridge.com.mx` — hay que seguir el redirect (`curl -L`) antes de comparar el hash, o se compara contra la página de redirect y no contra el sitio real.
 2. Los estilos reales están **inline**, no en las clases del primer `<style>` — para cambiar el look de una sección, buscar el `style="..."` del bloque, no una clase.
 3. La responsividad de grids depende de `applyMobileGrids()` (JS) — un cambio en un `grid-template-columns` inline debe seguir siendo detectable por ese selector (`[style*="grid-template-columns"]`) para colapsar correctamente en mobile.
+
+## 10. Idioma (ES/EN) — agregado 2026-09-26
+
+El sitio es bilingüe con un selector "ES · EN" en el nav (visible también en el menú móvil porque
+comparte el mismo `<ul id="nav-links">`). Sin duplicar `sitio.html` (pesa 9.3MB, casi todo
+imágenes base64 compartidas entre ambos idiomas) — un solo archivo, diccionario JS + atributos.
+
+- **HTML estático** (nav, hero, nosotros, los 3 acordeones de servicios, clientes, hablemos):
+  cada elemento de texto lleva `data-i18n="clave"`. El objeto `TRANSLATIONS = {es:{...}, en:{...}}`
+  (arriba del todo del `<script>` principal) trae **ambos** idiomas por clave — el español que ya
+  está en el HTML no se "captura" en runtime, es simétrico con el inglés. `applyLanguage(lang)`
+  hace `el.innerHTML = TRANSLATIONS[lang][clave]` para cada `[data-i18n]`.
+- **`CASOS`/`INDUSTRIAS`** (el explorador de industrias, dentro de la IIFE "EXPLORADOR DE
+  INDUSTRIAS"): cada objeto tiene sub-objetos `es:{...}`/`en:{...}` para los campos traducibles
+  (`titulo`, `problema`, `pills`, `cierre`, y `kpis[].label` cuando existen). `renderCaso()`/
+  `mkCard()` leen `c[currentLang]`/`ind[currentLang]`. `window.rerenderCasos()` vuelve a dibujar
+  la vista actual (respetando si hay una industria seleccionada, vía `currentIndId`) cuando cambia
+  el idioma — no resetea la navegación del usuario.
+- **Persistencia**: `localStorage['mindbridge-lang']`. Default `es` si no hay preferencia guardada.
+- **Selector de idioma y contraste móvil**: los botones ES/EN usan la clase `.lang-btn`
+  (`.active` para el idioma actual), no color inline — porque el menú móvil pinta los links de
+  blanco con `!important` (`.nav-links a` en el media query `≤768px`) y ese selector no alcanza a
+  `<button>`. Hay una regla `.nav-links .lang-btn` aparte en ese mismo media query. Si se agrega
+  otro control no-`<a>` al nav, va a necesitar su propio override ahí por la misma razón.
+- **Bug preexistente encontrado, no relacionado con el idioma**: el objeto `ICO` (íconos SVG por
+  industria) usa atributos SVG sin comillas y sin espacio antes de `/>` (ej. `y2=11/>`) — el
+  parser de HTML lee el `/` como parte del valor del atributo (`"11/"`), rompe varios íconos
+  (visible en consola: `Error: <line> attribute y2: Expected length, "11/"`). No se tocó al hacer
+  el bilingüe; si se toca `ICO` por otra razón, aprovechar para separar el `/` con un espacio
+  (`y2=11 />`) o comillar los valores.
