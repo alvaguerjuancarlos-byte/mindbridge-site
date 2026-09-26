@@ -1252,7 +1252,7 @@
         var dots = [];
         var phase = ri * 0.35;
         for (var i = 0; i < spec.count; i++) {
-          dots.push({ angle: phase + (i / spec.count) * Math.PI * 2, size: spec.size });
+          dots.push({ angle: phase + (i / spec.count) * Math.PI * 2, size: spec.size, white: Math.random() < 0.5 });
         }
         return { radius: tR * spec.frac, dots: dots };
       });
@@ -1300,7 +1300,7 @@
           var y = tCy + Math.sin(d.angle) * ring.radius;
           ctx.beginPath();
           ctx.arc(x, y, d.size, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(' + DOT_COLOR + ',0.9)';
+          ctx.fillStyle = 'rgba(' + (d.white ? PULSE_COLOR : DOT_COLOR) + ',0.9)';
           ctx.fill();
         }
       }
