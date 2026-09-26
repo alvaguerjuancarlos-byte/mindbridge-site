@@ -1226,6 +1226,24 @@
     var nextPulseAt = 0;
     var MAX_PULSES = 9;
 
+    // Barrido tipo sonar de sector: una línea oscila de un lado a otro dentro
+    // de un arco a la derecha del centro (nunca apunta hacia el texto, a
+    // diferencia de un giro completo de 360°); cuando cruza un nodo, dispara
+    // un "ping" -- el anillo que se expande, como un submarino detectando algo.
+    var SWEEP_SPEED = 0.006;
+    var SWEEP_WIDTH = 0.4;
+    var SWEEP_MIN = -1.48;   // ~-85°, casi derecho hacia arriba
+    var SWEEP_MAX = 1.48;    // ~85°, casi derecho hacia abajo -- nunca hacia la izquierda (texto)
+    var sweepAngle = SWEEP_MIN;
+    var sweepDir = 1;
+    var sweepCx = 0, sweepCy = 0, sweepRadius = 0;
+    var pings = [];
+
+    function angleInSweep(angle, prevA, newA) {
+      var lo = Math.min(prevA, newA), hi = Math.max(prevA, newA);
+      return angle >= lo && angle <= hi;
+    }
+
     function particleCount() {
       return W < 700 ? 26 : 58;
     }
@@ -1247,6 +1265,12 @@
     function resize() {
       W = canvas.width = hero.clientWidth;
       H = canvas.height = hero.clientHeight;
+      sweepCx = W * 0.72;
+      sweepCy = H * 0.6;
+      sweepRadius = Math.sqrt(W * W + H * H) * 0.55;
+      sweepAngle = SWEEP_MIN;
+      sweepDir = 1;
+      pings = [];
       makeParticles();
     }
 
@@ -1263,11 +1287,44 @@
       ctx.clearRect(0, 0, W, H);
       var links = [];
 
+      // Barrido de sonar (capa de fondo, detrás de la red).
+      var prevSweepAngle = sweepAngle;
+      sweepAngle += SWEEP_SPEED * sweepDir;
+      if (sweepAngle > SWEEP_MAX) { sweepAngle = SWEEP_MAX; sweepDir = -1; }
+      if (sweepAngle < SWEEP_MIN) { sweepAngle = SWEEP_MIN; sweepDir = 1; }
+      ctx.save();
+      var segs = 16;
+      for (var s = 0; s < segs; s++) {
+        var frac = s / segs;
+        var a = sweepAngle - SWEEP_WIDTH * (1 - frac) * sweepDir;
+        ctx.beginPath();
+        ctx.moveTo(sweepCx, sweepCy);
+        ctx.lineTo(sweepCx + Math.cos(a) * sweepRadius, sweepCy + Math.sin(a) * sweepRadius);
+        ctx.strokeStyle = 'rgba(' + DOT_COLOR + ',' + (0.32 * frac * frac) + ')';
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo(sweepCx, sweepCy);
+      ctx.lineTo(sweepCx + Math.cos(sweepAngle) * sweepRadius, sweepCy + Math.sin(sweepAngle) * sweepRadius);
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = 'rgba(' + DOT_COLOR + ',1)';
+      ctx.strokeStyle = 'rgba(' + PULSE_COLOR + ',0.85)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
         p.x += p.vx; p.y += p.vy;
         if (p.x < 0 || p.x > W) p.vx *= -1;
         if (p.y < 0 || p.y > H) p.vy *= -1;
+
+        var dxs = p.x - sweepCx, dys = p.y - sweepCy;
+        if (Math.sqrt(dxs * dxs + dys * dys) <= sweepRadius &&
+            angleInSweep(Math.atan2(dys, dxs), prevSweepAngle, sweepAngle)) {
+          pings.push({ x: p.x, y: p.y, t: 0 });
+        }
       }
 
       for (var i = 0; i < particles.length; i++) {
@@ -1325,6 +1382,17 @@
         ctx.fillStyle = 'rgba(' + PULSE_COLOR + ',' + fade + ')';
         ctx.fill();
         ctx.restore();
+      }
+
+      for (var pi = pings.length - 1; pi >= 0; pi--) {
+        var pg = pings[pi];
+        pg.t += 0.035;
+        if (pg.t >= 1) { pings.splice(pi, 1); continue; }
+        ctx.beginPath();
+        ctx.arc(pg.x, pg.y, 4 + pg.t * 26, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(' + PULSE_COLOR + ',' + ((1 - pg.t) * 0.8) + ')';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       }
 
       if (running) raf = requestAnimationFrame(step);
