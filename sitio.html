@@ -1225,7 +1225,10 @@
     var LINE_COLOR = '0,168,188';   // --teal
     var DOT_COLOR = '125,220,232';  // --teal-light
     var PULSE_COLOR = '255,255,255';
+    var ALERT_COLOR = '255,70,70';  // rojo -- "objetivos alineados" detectados
+    var ALERT_HOLD_MS = 900;
     var pings = [];
+    var alertUntil = 0;
 
     var SWEEP_SPEED = 0.0091;
     var sweepAngle = 0;
@@ -1264,6 +1267,21 @@
         }
         return { radius: tR * spec.frac, dots: dots };
       });
+
+      // Alinea a propósito un punto de cada anillo en un par de ángulos
+      // opuestos -- así el barrido "detecta objetivos alineados" (2+ puntos
+      // en la misma línea radial) de forma confiable en cada vuelta, no solo
+      // por casualidad.
+      [0, Math.PI].forEach(function(alignAngle) {
+        rings.forEach(function(ring) {
+          var nearest = null, bestDiff = Infinity;
+          ring.dots.forEach(function(d) {
+            var diff = Math.abs(Math.atan2(Math.sin(d.angle - alignAngle), Math.cos(d.angle - alignAngle)));
+            if (diff < bestDiff) { bestDiff = diff; nearest = d; }
+          });
+          if (nearest) nearest.angle = alignAngle;
+        });
+      });
     }
 
     function resize() {
@@ -1278,6 +1296,7 @@
       }
       sweepAngle = 0;
       pings = [];
+      alertUntil = 0;
       buildRings();
     }
 
@@ -1332,23 +1351,17 @@
       // desvanecido de arriba. Giro completo, acotado al radio del blanco.
       var prevSweepAngle = sweepAngle;
       sweepAngle += SWEEP_SPEED;
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(tCx, tCy);
-      ctx.lineTo(tCx + Math.cos(sweepAngle) * tR, tCy + Math.sin(sweepAngle) * tR);
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = 'rgba(' + DOT_COLOR + ',1)';
-      ctx.strokeStyle = 'rgba(' + PULSE_COLOR + ',0.9)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.restore();
 
       // Pings: el barrido "detecta" un punto del blanco al cruzar su ángulo.
+      // Si toca 2+ puntos alineados en el mismo cuadro, es una "detección de
+      // objetivos alineados" -- la línea se pone roja unos momentos.
+      var hitsThisFrame = 0;
       for (var r = 0; r < rings.length; r++) {
         var ring = rings[r];
         for (var i = 0; i < ring.dots.length; i++) {
           var d = ring.dots[i];
           if (angleInSweep(d.angle, prevSweepAngle, sweepAngle)) {
+            hitsThisFrame++;
             pings.push({
               x: tCx + Math.cos(d.angle) * ring.radius,
               y: tCy + Math.sin(d.angle) * ring.radius,
@@ -1357,6 +1370,21 @@
           }
         }
       }
+      if (hitsThisFrame >= 2) alertUntil = now + ALERT_HOLD_MS;
+      var sweepColor = now < alertUntil ? ALERT_COLOR : PULSE_COLOR;
+
+      var alerting = now < alertUntil;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(tCx, tCy);
+      ctx.lineTo(tCx + Math.cos(sweepAngle) * tR, tCy + Math.sin(sweepAngle) * tR);
+      ctx.shadowBlur = alerting ? 20 : 12;
+      ctx.shadowColor = 'rgba(' + sweepColor + ',1)';
+      ctx.strokeStyle = 'rgba(' + sweepColor + ',0.9)';
+      ctx.lineWidth = alerting ? 3 : 2;
+      ctx.stroke();
+      ctx.restore();
+
       for (var pi = pings.length - 1; pi >= 0; pi--) {
         var pg = pings[pi];
         pg.t += 0.04;
