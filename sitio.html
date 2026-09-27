@@ -1242,7 +1242,15 @@
     }
 
     function buildRings() {
-      var specs = [
+      // En móvil no solo el radio es menor -- también hay menos puntos y más
+      // chicos, para que la densidad (puntos por área) baje de verdad y no
+      // se vea más apretado que en desktop.
+      var specs = W < 700 ? [
+        { frac: 0.20, count: 2, size: 5.2 },
+        { frac: 0.45, count: 3, size: 3.8 },
+        { frac: 0.72, count: 5, size: 2.6 },
+        { frac: 1.00, count: 7, size: 1.7 }
+      ] : [
         { frac: 0.18, count: 3, size: 6.8 },
         { frac: 0.42, count: 5, size: 5.0 },
         { frac: 0.70, count: 8, size: 3.3 },
