@@ -1268,11 +1268,12 @@
         return { radius: tR * spec.frac, dots: dots };
       });
 
-      // Alinea a propósito un punto de cada anillo en un par de ángulos
-      // opuestos -- así el barrido "detecta objetivos alineados" (2+ puntos
-      // en la misma línea radial) de forma confiable en cada vuelta, no solo
-      // por casualidad.
-      [0, Math.PI].forEach(function(alignAngle) {
+      // Alinea a propósito un punto de cada anillo en 3 ángulos -- así el
+      // barrido "detecta objetivos alineados" (2+ puntos en la misma línea
+      // radial) de forma confiable en cada vuelta, no solo por casualidad.
+      // Ángulos a propósito NO alineados con la horizontal/vertical, para
+      // que no se vea geométrico/predecible.
+      [0.9, 2.8, 4.6].forEach(function(alignAngle) {
         rings.forEach(function(ring) {
           var nearest = null, bestDiff = Infinity;
           ring.dots.forEach(function(d) {
