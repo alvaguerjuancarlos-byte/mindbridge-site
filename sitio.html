@@ -1263,7 +1263,7 @@
       H = canvas.height = hero.clientHeight;
       if (W < 700) {
         tCx = W * 0.5; tCy = H * 0.88;
-        tR = Math.min(W * 0.32, H * 0.14, 110);
+        tR = Math.min(W * 0.32, H * 0.14, 110) * 0.75;
       } else {
         tCx = W * 0.82; tCy = H * 0.55;
         tR = Math.min(W * 0.14, H * 0.32, 200);
@@ -1307,31 +1307,30 @@
     }
 
     function step(now) {
-      ctx.clearRect(0, 0, W, H);
+      // Se desvanece en vez de borrarse de golpe -- deja una estela real
+      // (destination-out reduce el alpha existente en vez de acumular negro
+      // opaco, que sí pasaría con un fillRect normal sobre un canvas
+      // transparente). Así el barrido se ve oscuro->claro como un sonar de
+      // verdad, sin tener que dibujar N líneas discretas para simularlo.
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0,0,0,0.16)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+
       drawTarget();
 
-      // Barrido de sonar: giro completo, acotado al radio del blanco.
+      // Barrido de sonar: una sola línea brillante; la estela sale sola del
+      // desvanecido de arriba. Giro completo, acotado al radio del blanco.
       var prevSweepAngle = sweepAngle;
       sweepAngle += SWEEP_SPEED;
       ctx.save();
-      var segs = 18;
-      var SWEEP_WIDTH = 0.55;
-      for (var s = 0; s < segs; s++) {
-        var frac = s / segs;
-        var a = sweepAngle - SWEEP_WIDTH * (1 - frac);
-        ctx.beginPath();
-        ctx.moveTo(tCx, tCy);
-        ctx.lineTo(tCx + Math.cos(a) * tR, tCy + Math.sin(a) * tR);
-        ctx.strokeStyle = 'rgba(' + DOT_COLOR + ',' + (0.35 * frac * frac) + ')';
-        ctx.lineWidth = 1.4;
-        ctx.stroke();
-      }
       ctx.beginPath();
       ctx.moveTo(tCx, tCy);
       ctx.lineTo(tCx + Math.cos(sweepAngle) * tR, tCy + Math.sin(sweepAngle) * tR);
       ctx.shadowBlur = 12;
       ctx.shadowColor = 'rgba(' + DOT_COLOR + ',1)';
-      ctx.strokeStyle = 'rgba(' + PULSE_COLOR + ',0.85)';
+      ctx.strokeStyle = 'rgba(' + PULSE_COLOR + ',0.9)';
       ctx.lineWidth = 2;
       ctx.stroke();
       ctx.restore();
