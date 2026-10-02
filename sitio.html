@@ -1171,17 +1171,6 @@
         }, 2000);
       });
     });
-    // Auto-demo: abre el menu 1s despues de cargar y lo cierra a los 2s
-    setTimeout(function() {
-      if (getComputedStyle(btn).display !== 'none') {
-        btn.classList.add('active');
-        menu.classList.add('open');
-        setTimeout(function() {
-          btn.classList.remove('active');
-          menu.classList.remove('open');
-        }, 2000);
-      }
-    }, 1000);
   })();
 
   // Colapsar grids inline en mobile
