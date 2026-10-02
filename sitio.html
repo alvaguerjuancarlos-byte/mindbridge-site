@@ -348,10 +348,10 @@
 
 
 <!-- NOSOTROS -->
-<section id="nosotros" style="background: var(--white); padding: 4rem 4rem;">
+<section id="nosotros" style="background: var(--white); padding: 0.5rem 4rem 4rem;">
   <div style="max-width: 1200px; margin: 0 auto;">
 
-    <div class="reveal visible" style="margin-bottom: 2rem;">
+    <div class="reveal visible" style="margin-bottom: 1.25rem;">
       <div style="font-family:&#39;Manrope&#39;,sans-serif;font-size:11px;font-weight:500;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;" data-i18n="nosotros.eyebrow">Nosotros</div>
       <h2 style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:clamp(2rem,3vw,2.75rem);font-weight:700;color:var(--ink);line-height:1.15;letter-spacing:-0.02em;max-width:680px;" data-i18n="nosotros.h2">El puente entre tu negocio y la IA</h2>
       <p style="font-family:&#39;Manrope&#39;,sans-serif;font-size:15px;font-weight:300;color:var(--ink-muted);margin-top:0.5rem;" data-i18n="nosotros.sub">Consultores que entienden tu operación antes de proponer tecnología.</p>
@@ -387,21 +387,21 @@
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div id="nosotros-stats" style="display:flex;flex-direction:column;gap:1rem;">
           <div style="background:var(--white);border-radius:var(--border-radius-lg);padding:1rem 1.5rem;border:0.5px solid var(--border);text-align:center;">
-            <div style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">+250</div>
+            <div class="nos-count" data-count-to="250" data-count-prefix="+" style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">+0</div>
             <div style="font-family:&#39;Manrope&#39;,sans-serif;font-size:12px;font-weight:500;color:var(--ink-muted);margin-top:6px;text-transform:uppercase;letter-spacing:0.06em;" data-i18n="nosotros.stat1">Proyectos realizados</div>
           </div>
           <div style="background:var(--white);border-radius:var(--border-radius-lg);padding:1rem 1.5rem;border:0.5px solid var(--border);text-align:center;">
-            <div style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">92%</div>
+            <div class="nos-count" data-count-to="92" data-count-suffix="%" style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">0%</div>
             <div style="font-family:&#39;Manrope&#39;,sans-serif;font-size:12px;font-weight:500;color:var(--ink-muted);margin-top:6px;text-transform:uppercase;letter-spacing:0.06em;" data-i18n="nosotros.stat2">Tasa de éxito</div>
           </div>
           <div style="background:var(--white);border-radius:var(--border-radius-lg);padding:1rem 1.5rem;border:0.5px solid var(--border);text-align:center;">
-            <div style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">+15</div>
+            <div class="nos-count" data-count-to="15" data-count-prefix="+" style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">+0</div>
             <div style="font-family:&#39;Manrope&#39;,sans-serif;font-size:12px;font-weight:500;color:var(--ink-muted);margin-top:6px;text-transform:uppercase;letter-spacing:0.06em;" data-i18n="nosotros.stat3">Industrias atendidas</div>
           </div>
           <div style="background:var(--white);border-radius:var(--border-radius-lg);padding:1rem 1.5rem;border:0.5px solid var(--border);text-align:center;">
-            <div style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">+10</div>
+            <div class="nos-count" data-count-to="10" data-count-prefix="+" style="font-family:&#39;Space Grotesk&#39;,sans-serif;font-size:2rem;font-weight:700;color:var(--teal);line-height:1;">+0</div>
             <div style="font-family:&#39;Manrope&#39;,sans-serif;font-size:12px;font-weight:500;color:var(--ink-muted);margin-top:6px;text-transform:uppercase;letter-spacing:0.06em;" data-i18n="nosotros.stat4">Funciones de negocio</div>
           </div>
         </div>
@@ -409,6 +409,10 @@
       </div>
     </div>
 
+    <div class="reveal visible" style="text-align:center;padding:1.75rem 1rem 0.5rem;">
+      <p style="font-family:'Space Grotesk',sans-serif;font-size:clamp(1.3rem,2.3vw,1.85rem);font-weight:700;color:var(--ink);letter-spacing:-0.01em;margin-bottom:0.65rem;" data-i18n="nosotros.pregunta">¿Sabes dónde está el mayor reto de tu negocio?</p>
+      <p style="font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.1em;" data-i18n="nosotros.categorias">VENTAS - OPERACIÓN - SERVICIO - ADMINISTRACIÓN - RH - COMPRAS - LEGAL</p>
+    </div>
 
   </div>
 </section>
@@ -963,6 +967,8 @@
       'nosotros.reto4': `<strong style="color:var(--ink);">Presión para usar IA</strong> — usuarios adoptando herramientas sin directrices claras ni seguridad`,
       'nosotros.stat1': `Proyectos realizados`, 'nosotros.stat2': `Tasa de éxito`,
       'nosotros.stat3': `Industrias atendidas`, 'nosotros.stat4': `Funciones de negocio`,
+      'nosotros.pregunta': `¿Sabes dónde está el mayor reto de tu negocio?`,
+      'nosotros.categorias': `VENTAS - OPERACIÓN - SERVICIO - ADMINISTRACIÓN - RH - COMPRAS - LEGAL`,
       'servicios.eyebrow': `Nuestra oferta de servicios`,
       'servicios.h2': `Resolviendo de la manera más simple <span style="color:var(--teal);">los problemas más complejos</span>`,
       'servicios.sub': `Tres pilares de servicio con capacidades técnicas de primer nivel, respaldados por un ecosistema de partners best-in-class.`,
@@ -1039,6 +1045,8 @@
       'nosotros.reto4': `<strong style="color:var(--ink);">Pressure to use AI</strong> — users adopt tools with no clear guidelines or security`,
       'nosotros.stat1': `Projects delivered`, 'nosotros.stat2': `Success rate`,
       'nosotros.stat3': `Industries served`, 'nosotros.stat4': `Business functions`,
+      'nosotros.pregunta': `Do you know where your business's biggest challenge lies?`,
+      'nosotros.categorias': `SALES - OPERATIONS - SERVICE - ADMINISTRATION - HR - PURCHASING - LEGAL`,
       'servicios.eyebrow': `Our Services`,
       'servicios.h2': `Solving <span style="color:var(--teal);">the most complex problems</span> the simplest way`,
       'servicios.sub': `Three service pillars with top-tier technical capabilities, backed by a best-in-class partner ecosystem.`,
@@ -1153,6 +1161,40 @@
     });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Contador animado de estadisticas (Nosotros)
+  (function() {
+    var wrap = document.getElementById('nosotros-stats');
+    if (!wrap) return;
+    var nums = wrap.querySelectorAll('.nos-count');
+    var DURATION = 1200;
+
+    function runCount(el) {
+      var target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
+      var prefix = el.getAttribute('data-count-prefix') || '';
+      var suffix = el.getAttribute('data-count-suffix') || '';
+      var start = null;
+      function ease(t) { return 1 - Math.pow(1 - t, 3); }
+      function step(ts) {
+        if (start === null) start = ts;
+        var p = Math.min((ts - start) / DURATION, 1);
+        var val = Math.round(target * ease(p));
+        el.textContent = prefix + val + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    var statsObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          nums.forEach(runCount);
+          statsObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    statsObserver.observe(wrap);
+  })();
 
   // Hamburger menu
   (function() {
