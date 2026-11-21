@@ -381,7 +381,7 @@
     if (v !== 'a' && v !== 'b') {
       if (MODO === 'alternar') {
         var semana = Math.floor((Date.now() / 864e5 + 3) / 7);   // semanas desde 1970, cambia en lunes
-        v = semana % 2 ? 'b' : 'a';
+        v = semana % 2 ? 'a' : 'b';   // semana del 16-nov-2026 = B
       } else { v = MODO; }
     }
     document.documentElement.setAttribute('data-hero', v);
